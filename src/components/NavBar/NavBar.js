@@ -13,7 +13,7 @@ const NavBar = () => {
       className="navbar-static-top"
       expand="sm"
       variant="light"
-      style={{ border: "solid 1px red", maxHeight: "10vh" }}
+      style={{ maxHeight: "10vh" }}
     >
       <Container fluid>
         {/* elements aligned to left of navbar */}
@@ -23,7 +23,7 @@ const NavBar = () => {
             <img
               src={CapstoneLogo}
               alt="capstone-logo"
-              style={{ maxHeight: "4vh" }}
+              style={{ maxHeight: "2rem" }}
             />
           </Navbar.Brand>
         </div>
