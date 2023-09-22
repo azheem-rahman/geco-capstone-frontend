@@ -113,6 +113,8 @@ const LoginSignUp = () => {
         switch (response.message) {
           case "Failed to read request body":
           case "Failed to retrieve login credentials in database":
+          case "Failed to retrieve account details in database":
+          case "No account details found":
           case "Failed to create token":
             setLoginFailedMessage("Please try again");
             break;
@@ -125,6 +127,8 @@ const LoginSignUp = () => {
       else if (response.status === 200) {
         // set context with login account credentials
         someCtx.setEmail(loginEmail);
+        someCtx.setFirstName(response.firstName);
+        someCtx.setLastName(response.lastName);
         someCtx.setAccountType(response.accountType);
 
         // Proceed to dashboard after successful sign up
@@ -337,10 +341,6 @@ const LoginSignUp = () => {
       }
       // Response HTTP OK 200
       else if (response.status === 200) {
-        // set context with new account credentials
-        someCtx.setEmail(signUpEmail);
-        someCtx.setAccountType(signUpRegion);
-
         createAccountDetailsToBackend();
       }
     } catch (error) {
@@ -388,6 +388,8 @@ const LoginSignUp = () => {
         // set context with new account details
         someCtx.setFirstName(signUpFirstName);
         someCtx.setLastName(signUpLastName);
+        someCtx.setEmail(signUpEmail);
+        someCtx.setAccountType(signUpRegion);
 
         // Proceed to dashboard after successful sign up
         setSuccessfulLoginOrSignUp(true);
