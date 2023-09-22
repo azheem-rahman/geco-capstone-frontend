@@ -1,4 +1,5 @@
 import React, { useContext, useState } from "react";
+import CapstoneLogo from "../../assets/capstone-logo.png";
 import {
   Tab,
   Form,
@@ -289,6 +290,15 @@ const LoginSignUp = () => {
     <div className="container-fluid vh-100 d-flex flex-column justify-content-center">
       <div className="row d-flex justify-content-center">
         <div className="col-md-8 col-lg-4">
+          <div className="row">
+            <div className="col d-flex justify-content-center mb-3">
+              <img
+                src={CapstoneLogo}
+                alt="capstone-logo"
+                style={{ maxHeight: "3rem" }}
+              />
+            </div>
+          </div>
           <Tabs
             defaultActiveKey="login"
             id="login-sign-up"
