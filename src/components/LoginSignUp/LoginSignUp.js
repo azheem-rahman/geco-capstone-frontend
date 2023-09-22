@@ -1,15 +1,6 @@
 import React, { useContext, useState } from "react";
 import CapstoneLogo from "../../assets/capstone-logo.png";
-import {
-  Tab,
-  Form,
-  Button,
-  Tabs,
-  FloatingLabel,
-  InputGroup,
-  ButtonGroup,
-  ToggleButtonGroup,
-} from "react-bootstrap";
+import { Tab, Form, Button, Tabs } from "react-bootstrap";
 import SomeContext from "../../context/some-context";
 import { Navigate } from "react-router-dom";
 
@@ -22,7 +13,11 @@ const LoginSignUp = () => {
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [loginValid, setLoginValid] = useState(false);
-  const [loginErrorMessage, setLoginErrorMessage] = useState("");
+  const [loginErrorMessages, setLoginErrorMessages] = useState({
+    loginEmailError: "",
+    loginPasswordError: "",
+  });
+  const [loginFailedMessage, setLoginFailedMessage] = useState("");
 
   // Sign Up States
   const [signUpFirstName, setSignUpFirstName] = useState("");
@@ -44,16 +39,56 @@ const LoginSignUp = () => {
   //===================== Login Functions =====================//
   //===========================================================//
   const handleLoginEmailChange = (event) => {
-    setLoginEmail(event.target.value);
+    if (event.target.value !== "") {
+      let loginEmailError = "";
+      setLoginErrorMessages({ ...loginErrorMessages, loginEmailError });
+      setLoginEmail(event.target.value);
+      setLoginValid(true);
+    } else {
+      let loginEmailError = "Email is required";
+      setLoginErrorMessages({ ...loginErrorMessages, loginEmailError });
+      setLoginValid(false);
+    }
   };
 
   const handleLoginPasswordChange = (event) => {
-    setLoginPassword(event.target.value);
+    if (event.target.value !== "") {
+      let loginPasswordError = "";
+      setLoginErrorMessages({ ...loginErrorMessages, loginPasswordError });
+      setLoginPassword(event.target.value);
+      setLoginValid(true);
+    } else {
+      let loginPasswordError = "Password is required";
+      setLoginErrorMessages({ ...loginErrorMessages, loginPasswordError });
+      setLoginValid(false);
+    }
   };
 
   const handleLogin = (event) => {
     event.preventDefault();
-    loginAccountToBackend();
+    let noInput = false;
+    let loginEmailError = "";
+    let loginPasswordError = "";
+    if (document.getElementById("login-email").value === "") {
+      loginEmailError = "Email is required";
+      setLoginValid(false);
+      noInput = true;
+    }
+    if (document.getElementById("login-password").value === "") {
+      loginPasswordError = "Password is required";
+      setLoginValid(false);
+      noInput = true;
+    }
+
+    if (loginValid) {
+      loginAccountToBackend();
+    } else if (noInput) {
+      setLoginErrorMessages({
+        ...loginErrorMessages,
+        loginEmailError,
+        loginPasswordError,
+      });
+    }
   };
 
   const loginAccountToBackend = async () => {
@@ -79,10 +114,10 @@ const LoginSignUp = () => {
           case "Failed to read request body":
           case "Failed to retrieve login credentials in database":
           case "Failed to create token":
-            setSignUpFailedMessage("Please try again");
+            setLoginFailedMessage("Please try again");
             break;
           case "Invalid email or password":
-            setLoginErrorMessage("Invalid email or password");
+            setLoginFailedMessage("Invalid email or password");
             break;
         }
       }
@@ -398,79 +433,81 @@ const LoginSignUp = () => {
           >
             {/* Login Form */}
             <Tab eventKey="login" title="Login">
-              <div className="row">
-                <div className="col">
-                  <Form.Group className="mb-3" controlId="login-email">
-                    <Form.Control
-                      type="email"
-                      placeholder="Email Address *"
-                      autoFocus
-                      value={loginEmail}
-                      onChange={handleLoginEmailChange}
-                    />
-                    <Form.Text muted>
-                      {signUpErrorMessages.signUpFirstNameError}
-                    </Form.Text>
-                  </Form.Group>
+              <Form onSubmit={handleLogin}>
+                <div className="row">
+                  <div className="col">
+                    <Form.Group className="mb-3" controlId="login-email">
+                      <Form.Control
+                        type="email"
+                        placeholder="Email Address *"
+                        autoFocus
+                        onChange={handleLoginEmailChange}
+                      />
+                      <Form.Text muted>
+                        {loginErrorMessages.loginEmailError}
+                      </Form.Text>
+                    </Form.Group>
+                  </div>
                 </div>
-              </div>
-              <div className="row">
-                <div className="col">
-                  <Form.Group className="mb-3" controlId="login-password">
-                    <Form.Control
-                      type="password"
-                      placeholder="Password *"
-                      value={loginPassword}
-                      onChange={handleLoginPasswordChange}
-                    />
-                  </Form.Group>
+                <div className="row">
+                  <div className="col">
+                    <Form.Group className="mb-3" controlId="login-password">
+                      <Form.Control
+                        type="password"
+                        placeholder="Password *"
+                        onChange={handleLoginPasswordChange}
+                      />
+                      <Form.Text muted>
+                        {loginErrorMessages.loginPasswordError}
+                      </Form.Text>
+                    </Form.Group>
+                  </div>
                 </div>
-              </div>
-              <div className="row mx-0">
-                <Button className="mb-3" onSubmit={handleLogin}>
-                  SIGN IN
-                </Button>
-              </div>
-              <div className="row mb-3">
-                <div className="col d-flex justify-content-start">
-                  <a href="#">Forgot password?</a>
+                <div className="row mx-0">
+                  <Button type="submit">SIGN IN</Button>
+                  <Form.Text muted>{loginFailedMessage}</Form.Text>
                 </div>
-                <div className="col d-flex justify-content-end">
-                  <a href="#">Don't have an account? Sign Up</a>
+                <div className="row mb-3">
+                  <div className="col d-flex justify-content-start">
+                    <a href="#">Forgot password?</a>
+                  </div>
+                  <div className="col d-flex justify-content-end">
+                    <a href="#">Don't have an account? Sign Up</a>
+                  </div>
                 </div>
-              </div>
+              </Form>
             </Tab>
 
             {/* Sign Up Form */}
             <Tab eventKey="sign-up" title="Sign Up">
-              <div className="row">
-                <div className="col">
-                  <Form.Group className="mb-3" controlId="signup-first-name">
-                    <Form.Control
-                      type="text"
-                      placeholder="First Name *"
-                      onChange={handleSignUpChange}
-                    />
-                    <Form.Text muted>
-                      {signUpErrorMessages.signUpFirstNameError}
-                    </Form.Text>
-                  </Form.Group>
-                </div>
-                <div className="col">
-                  <Form.Group controlId="signup-last-name">
-                    <Form.Control
-                      type="text"
-                      placeholder="Last Name *"
-                      onChange={handleSignUpChange}
-                    />
-                    <Form.Text muted>
-                      {signUpErrorMessages.signUpLastNameError}
-                    </Form.Text>
-                  </Form.Group>
-                </div>
-              </div>
-
               <Form onSubmit={handleSignUpSubmit}>
+                <div className="row">
+                  <div className="col">
+                    <Form.Group className="mb-3" controlId="signup-first-name">
+                      <Form.Control
+                        type="text"
+                        placeholder="First Name *"
+                        onChange={handleSignUpChange}
+                      />
+                      <Form.Text muted>
+                        {signUpErrorMessages.signUpFirstNameError}
+                      </Form.Text>
+                    </Form.Group>
+                  </div>
+                  <div className="col">
+                    <Form.Group controlId="signup-last-name">
+                      <Form.Control
+                        type="text"
+                        placeholder="Last Name *"
+                        onChange={handleSignUpChange}
+                      />
+                      <Form.Text muted>
+                        {signUpErrorMessages.signUpLastNameError}
+                      </Form.Text>
+                    </Form.Group>
+                  </div>
+                </div>
+
                 <div className="row">
                   <div className="col">
                     <Form.Group className="mb-3" controlId="signup-email">
@@ -533,9 +570,7 @@ const LoginSignUp = () => {
                 </div>
 
                 <div className="row mx-0 mb-3">
-                  <Button type="submit" className="">
-                    SIGN UP
-                  </Button>
+                  <Button type="submit">SIGN UP</Button>
                   <Form.Text muted>{signUpFailedMessage}</Form.Text>
                 </div>
 
