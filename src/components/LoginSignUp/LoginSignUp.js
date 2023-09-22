@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   Tab,
   Form,
@@ -9,8 +9,14 @@ import {
   ButtonGroup,
   ToggleButtonGroup,
 } from "react-bootstrap";
+import SomeContext from "../../context/some-context";
+import { Navigate } from "react-router-dom";
 
 const LoginSignUp = () => {
+  const someCtx = useContext(SomeContext);
+
+  const [successfulLoginOrSignUp, setSuccessfulLoginOrSignUp] = useState(false);
+
   // Login States
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
@@ -162,6 +168,7 @@ const LoginSignUp = () => {
       setSignUpErrorMessages({ ...signUpErrorMessages, signUpRegionError });
     } else {
       alert("successful sign up!");
+
       createAccountToBackend();
     }
   };
@@ -182,6 +189,7 @@ const LoginSignUp = () => {
       });
 
       const response = await res.json();
+      console.log(response);
 
       // Response HTTP Error 400
       if (response.status === 400) {
@@ -204,11 +212,11 @@ const LoginSignUp = () => {
       // Response HTTP OK 200
       else if (response.status === 200) {
         // set context with new account credentials
+        someCtx.setEmail(signUpEmail);
+        someCtx.setAccountType(signUpRegion);
+
         createAccountDetailsToBackend();
       }
-
-      console.log(response);
-      console.log(response.status);
     } catch (error) {
       console.log(error.message);
     }
@@ -221,6 +229,45 @@ const LoginSignUp = () => {
       first_name: signUpFirstName,
       last_name: signUpLastName,
     };
+
+    try {
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+
+      const response = await res.json();
+      console.log(response);
+
+      // Response HTTP Error 400
+      if (response.status === 400) {
+        switch (response.message) {
+          case "Failed to read request body":
+          case "Failed to check if account exists in database":
+          case "Failed to create account details":
+            setSignUpFailedMessage("Please try again");
+            break;
+          case "No Account Found":
+            let signUpEmailError = "Sorry, that email already exists";
+            setSignUpErrorMessages({
+              ...signUpErrorMessages,
+              signUpEmailError,
+            });
+            break;
+        }
+      } else if (response.status === 200) {
+        // set context with new account details
+        someCtx.setFirstName(signUpFirstName);
+        someCtx.setLastName(signUpLastName);
+
+        // Proceed to dashboard after successful sign up
+        setSuccessfulLoginOrSignUp(true);
+      }
+      // Response HTTP OK 200
+    } catch (error) {
+      console.log(error.message);
+    }
 
     // Reset after sending new account credentials and details to backend
     setSignUpFirstName("");
@@ -397,6 +444,8 @@ const LoginSignUp = () => {
           </Tabs>
         </div>
       </div>
+
+      {successfulLoginOrSignUp && <Navigate to="/np-home" />}
     </div>
   );
 };
