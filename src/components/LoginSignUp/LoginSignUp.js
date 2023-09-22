@@ -22,10 +22,7 @@ const LoginSignUp = () => {
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [loginValid, setLoginValid] = useState(false);
-  const [loginErrorMessages, setLoginErrorMessages] = useState({
-    loginEmailError: "",
-    loginPasswordError: "",
-  });
+  const [loginErrorMessage, setLoginErrorMessage] = useState("");
 
   // Sign Up States
   const [signUpFirstName, setSignUpFirstName] = useState("");
@@ -43,7 +40,9 @@ const LoginSignUp = () => {
   });
   const [signUpFailedMessage, setSignUpFailedMessage] = useState("");
 
-  // Login Functions
+  //===========================================================//
+  //===================== Login Functions =====================//
+  //===========================================================//
   const handleLoginEmailChange = (event) => {
     setLoginEmail(event.target.value);
   };
@@ -54,10 +53,56 @@ const LoginSignUp = () => {
 
   const handleLogin = (event) => {
     event.preventDefault();
-    // Login Credentials Validation
+    loginAccountToBackend();
   };
 
-  // Sign Up Functions
+  const loginAccountToBackend = async () => {
+    const url = "http://127.0.0.1:8080/login";
+    const body = {
+      email: loginEmail,
+      password: loginPassword,
+    };
+
+    try {
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+
+      const response = await res.json();
+      console.log(response);
+
+      // Response HTTP Error 400
+      if (response.status === 400) {
+        switch (response.message) {
+          case "Failed to read request body":
+          case "Failed to retrieve login credentials in database":
+          case "Failed to create token":
+            setSignUpFailedMessage("Please try again");
+            break;
+          case "Invalid email or password":
+            setLoginErrorMessage("Invalid email or password");
+            break;
+        }
+      }
+      // Response HTTP OK 200
+      else if (response.status === 200) {
+        // set context with login account credentials
+        someCtx.setEmail(loginEmail);
+        someCtx.setAccountType(response.accountType);
+
+        // Proceed to dashboard after successful sign up
+        setSuccessfulLoginOrSignUp(true);
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  //===========================================================//
+  //==================== Sign Up Functions ====================//
+  //===========================================================//
   const handleSignUpChange = (event) => {
     if (
       event.target.id === "signup-first-name" ||
@@ -118,7 +163,10 @@ const LoginSignUp = () => {
     let signUpEmailError = "";
     const emailPattern = /[a-z0-9]+@[a-z]+\.[a-z]{2,3}/;
 
-    if (!emailPattern.test(signUpEmail)) {
+    if (signUpEmail.trim() === "") {
+      signUpEmailValid = false;
+      signUpEmailError = "Email is required";
+    } else if (!emailPattern.test(signUpEmail)) {
       signUpEmailValid = false;
       signUpEmailError = "Please enter a valid email";
     } else {
@@ -141,7 +189,10 @@ const LoginSignUp = () => {
     let signUpPasswordError = "";
     const passwordPattern = /(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}/;
 
-    if (!passwordPattern.test(signUpPassword)) {
+    if (signUpPassword.trim() === "") {
+      signUpPasswordValid = false;
+      signUpPasswordError = "Password is required";
+    } else if (!passwordPattern.test(signUpPassword)) {
       signUpPasswordValid = false;
       signUpPasswordError =
         "Must contain at least one number, one uppercase, one lowercase, and at least 8 characters";
@@ -159,18 +210,57 @@ const LoginSignUp = () => {
 
   const handleSignUpSubmit = (event) => {
     event.preventDefault();
+    let noInput = false;
+    let signUpFirstNameError = "";
+    let signUpLastNameError = "";
+    let signUpEmailError = "";
+    let signUpPasswordError = "";
+    let signUpRegionError = "";
 
+    // Validation to check that all inputs are filled upon submit
+    if (document.getElementById("signup-first-name").value === "") {
+      setSignUpValid(false);
+      noInput = true;
+      signUpFirstNameError = "Name is required";
+    }
+    if (document.getElementById("signup-last-name").value === "") {
+      setSignUpValid(false);
+      noInput = true;
+      signUpLastNameError = "Name is required";
+    }
+    if (document.getElementById("signup-email").value === "") {
+      setSignUpValid(false);
+      noInput = true;
+      signUpEmailError = "Email is required";
+    }
+    if (document.getElementById("signup-password").value === "") {
+      setSignUpValid(false);
+      noInput = true;
+      signUpPasswordError = "Password is required";
+    }
     if (
       !document.getElementsByName("partner")[0].checked &&
       !document.getElementsByName("partner")[1].checked
     ) {
       setSignUpValid(false);
-      let signUpRegionError = "Please select a region";
-      setSignUpErrorMessages({ ...signUpErrorMessages, signUpRegionError });
-    } else {
-      alert("successful sign up!");
+      noInput = true;
+      signUpRegionError = "Please select a region";
+    }
 
+    // All inputs passed all validation checks
+    if (signUpValid) {
       createAccountToBackend();
+    }
+    // User did not input anything
+    else if (noInput) {
+      setSignUpErrorMessages({
+        ...signUpErrorMessages,
+        signUpFirstNameError,
+        signUpLastNameError,
+        signUpEmailError,
+        signUpPasswordError,
+        signUpRegionError,
+      });
     }
   };
 
@@ -257,7 +347,9 @@ const LoginSignUp = () => {
             });
             break;
         }
-      } else if (response.status === 200) {
+      }
+      // Response HTTP OK 200
+      else if (response.status === 200) {
         // set context with new account details
         someCtx.setFirstName(signUpFirstName);
         someCtx.setLastName(signUpLastName);
@@ -265,7 +357,6 @@ const LoginSignUp = () => {
         // Proceed to dashboard after successful sign up
         setSuccessfulLoginOrSignUp(true);
       }
-      // Response HTTP OK 200
     } catch (error) {
       console.log(error.message);
     }
@@ -305,6 +396,7 @@ const LoginSignUp = () => {
             className="mb-3 bg-light"
             justify
           >
+            {/* Login Form */}
             <Tab eventKey="login" title="Login">
               <div className="row">
                 <div className="col">
@@ -316,6 +408,9 @@ const LoginSignUp = () => {
                       value={loginEmail}
                       onChange={handleLoginEmailChange}
                     />
+                    <Form.Text muted>
+                      {signUpErrorMessages.signUpFirstNameError}
+                    </Form.Text>
                   </Form.Group>
                 </div>
               </div>
