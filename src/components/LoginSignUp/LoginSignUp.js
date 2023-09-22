@@ -25,13 +25,16 @@ const LoginSignUp = () => {
   const [signUpLastName, setSignUpLastName] = useState("");
   const [signUpEmail, setSignUpEmail] = useState("");
   const [signUpPassword, setSignUpPassword] = useState("");
+  const [signUpRegion, setSignUpRegion] = useState("");
   const [signUpValid, setSignUpValid] = useState(false);
   const [signUpErrorMessages, setSignUpErrorMessages] = useState({
     signUpFirstNameError: "",
     signUpLastNameError: "",
     signUpEmailError: "",
     signUpPasswordError: "",
+    signUpRegionError: "",
   });
+  const [signUpFailedMessage, setSignUpFailedMessage] = useState("");
 
   // Login Functions
   const handleLoginEmailChange = (event) => {
@@ -149,21 +152,90 @@ const LoginSignUp = () => {
 
   const handleSignUpSubmit = (event) => {
     event.preventDefault();
-    console.log("sign up submit!");
-    if (signUpValid) {
-      setSignUpFirstName("");
-      setSignUpLastName("");
-      setSignUpEmail("");
-      setSignUpPassword("");
+
+    if (
+      !document.getElementsByName("partner")[0].checked &&
+      !document.getElementsByName("partner")[1].checked
+    ) {
       setSignUpValid(false);
-      setSignUpErrorMessages({
-        signUpFirstNameError: "",
-        signUpLastNameError: "",
-        signUpEmailError: "",
-        signUpPasswordError: "",
-      });
+      let signUpRegionError = "Please select a region";
+      setSignUpErrorMessages({ ...signUpErrorMessages, signUpRegionError });
+    } else {
       alert("successful sign up!");
+      createAccountToBackend();
     }
+  };
+
+  const createAccountToBackend = async () => {
+    const url = "http://127.0.0.1:8080/new-account";
+    const body = {
+      email: signUpEmail,
+      password: signUpPassword,
+      account_type: signUpRegion,
+    };
+
+    try {
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+
+      const response = await res.json();
+
+      // Response HTTP Error 400
+      if (response.status === 400) {
+        switch (response.message) {
+          case "Failed to read request body":
+          case "Failed to check if email taken in database":
+          case "Failed to hash password":
+          case "Failed to create user":
+            setSignUpFailedMessage("Please try again");
+            break;
+          case "Email taken":
+            let signUpEmailError = "Sorry, that email already exists";
+            setSignUpErrorMessages({
+              ...signUpErrorMessages,
+              signUpEmailError,
+            });
+            break;
+        }
+      }
+      // Response HTTP OK 200
+      else if (response.status === 200) {
+        // set context with new account credentials
+        createAccountDetailsToBackend();
+      }
+
+      console.log(response);
+      console.log(response.status);
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  const createAccountDetailsToBackend = async () => {
+    const url = "http://127.0.0.1:8080/new-account-details";
+    const body = {
+      email: signUpEmail,
+      first_name: signUpFirstName,
+      last_name: signUpLastName,
+    };
+
+    // Reset after sending new account credentials and details to backend
+    setSignUpFirstName("");
+    setSignUpLastName("");
+    setSignUpEmail("");
+    setSignUpPassword("");
+    setSignUpRegion("");
+    setSignUpValid(false);
+    setSignUpErrorMessages({
+      signUpFirstNameError: "",
+      signUpLastNameError: "",
+      signUpEmailError: "",
+      signUpPasswordError: "",
+      signUpRegionError: "",
+    });
   };
 
   return (
@@ -277,7 +349,7 @@ const LoginSignUp = () => {
                   </div>
                 </div>
 
-                <div className="row">
+                <div className="row mb-3">
                   <div className="col-3 d-flex justify-content-start">
                     <Form.Label>Select Region</Form.Label>
                   </div>
@@ -289,6 +361,8 @@ const LoginSignUp = () => {
                         type="radio"
                         id="signup-partner-malaysia"
                         name="partner"
+                        value="partner_malaysia"
+                        onClick={() => setSignUpRegion("partner_malaysia")}
                       />
                       <Form.Check
                         inline
@@ -296,15 +370,21 @@ const LoginSignUp = () => {
                         type="radio"
                         id="signup-partner-indonesia"
                         name="partner"
+                        value="partner_indonesia"
+                        onClick={() => setSignUpRegion("partner_indonesia")}
                       />
+                      <Form.Text muted>
+                        {signUpErrorMessages.signUpRegionError}
+                      </Form.Text>
                     </Form.Group>
                   </div>
                 </div>
 
-                <div className="row mx-0">
-                  <Button type="submit" className="mb-3">
+                <div className="row mx-0 mb-3">
+                  <Button type="submit" className="">
                     SIGN UP
                   </Button>
+                  <Form.Text muted>{signUpFailedMessage}</Form.Text>
                 </div>
 
                 <div className="row mb-3">
