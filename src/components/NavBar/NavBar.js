@@ -13,11 +13,11 @@ const NavBar = () => {
   const displayAccountType = (accountType) => {
     switch (accountType) {
       case "admin":
-        return <text>Admin</text>;
+        return <span>Admin</span>;
       case "partner_malaysia":
-        return <text>Malaysia</text>;
+        return <span>Malaysia</span>;
       case "partner_indonesia":
-        return <text>Indonesia</text>;
+        return <span>Indonesia</span>;
     }
   };
 
