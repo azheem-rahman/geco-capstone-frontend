@@ -1,13 +1,26 @@
-import React from "react";
+import React, { useContext } from "react";
 
 import Container from "react-bootstrap/Container";
-import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import CapstoneLogo from "../../assets/capstone-logo.png";
 import { Bell, PersonCircle } from "react-bootstrap-icons";
 import NavDropdown from "react-bootstrap/NavDropdown";
+import SomeContext from "../../context/some-context";
 
 const NavBar = () => {
+  const someCtx = useContext(SomeContext);
+
+  const displayAccountType = (accountType) => {
+    switch (accountType) {
+      case "admin":
+        return <text>Admin</text>;
+      case "partner_malaysia":
+        return <text>Malaysia</text>;
+      case "partner_indonesia":
+        return <text>Indonesia</text>;
+    }
+  };
+
   return (
     <Navbar
       className="navbar-static-top"
@@ -31,7 +44,8 @@ const NavBar = () => {
         {/* elements aligned to right of navbar */}
         <div className="ms-auto">
           <div className="row d-flex align-items-center">
-            <div className="col-3">
+            <div className="col">{displayAccountType(someCtx.accountType)}</div>
+            <div className="col">
               {/* Notification Icon -- onClick opens small modal */}
               <Bell
                 className="m-1"
@@ -39,7 +53,7 @@ const NavBar = () => {
               />
             </div>
 
-            <div className="col-2">
+            <div className="col">
               {/* User Profile -- onClick opens small modal -- Profile, Log Out */}
               <PersonCircle
                 className="m-1"
@@ -48,7 +62,10 @@ const NavBar = () => {
             </div>
 
             <div className="col">
-              <NavDropdown align="end" title="ProfileName">
+              <NavDropdown
+                align="end"
+                title={`${someCtx.firstName} ${someCtx.lastName}`}
+              >
                 <NavDropdown.Item>Profile</NavDropdown.Item>
                 <NavDropdown.Divider />
                 <NavDropdown.Item>Log Out</NavDropdown.Item>
@@ -56,13 +73,6 @@ const NavBar = () => {
             </div>
           </div>
         </div>
-
-        {/* Menu -- Dashboards -- Different dashboards */}
-        {/* <Navbar.Collapse>
-          <Nav className="ms-auto">
-            <Nav.Link></Nav.Link>
-          </Nav>
-        </Navbar.Collapse> */}
       </Container>
     </Navbar>
   );
