@@ -587,7 +587,15 @@ const LoginSignUp = () => {
         </div>
       </div>
 
-      {successfulLoginOrSignUp && <Navigate to="/np-home" />}
+      {successfulLoginOrSignUp &&
+        (someCtx.accountType === "partner_malaysia" ||
+          someCtx.accountType === "partner_indonesia") && (
+          <Navigate to="/np-home" />
+        )}
+
+      {successfulLoginOrSignUp && someCtx.accountType === "admin" && (
+        <Navigate to="/admin-home" />
+      )}
     </div>
   );
 };
