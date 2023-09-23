@@ -469,14 +469,6 @@ const LoginSignUp = () => {
                   <Button type="submit">SIGN IN</Button>
                   <Form.Text muted>{loginFailedMessage}</Form.Text>
                 </div>
-                <div className="row mb-3">
-                  <div className="col d-flex justify-content-start">
-                    <a href="#">Forgot password?</a>
-                  </div>
-                  <div className="col d-flex justify-content-end">
-                    <a href="#">Don't have an account? Sign Up</a>
-                  </div>
-                </div>
               </Form>
             </Tab>
 
@@ -574,12 +566,6 @@ const LoginSignUp = () => {
                 <div className="row mx-0 mb-3">
                   <Button type="submit">SIGN UP</Button>
                   <Form.Text muted>{signUpFailedMessage}</Form.Text>
-                </div>
-
-                <div className="row mb-3">
-                  <div className="col d-flex justify-content-end">
-                    <a href="#">Already have an account? Sign in</a>
-                  </div>
                 </div>
               </Form>
             </Tab>
