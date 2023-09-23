@@ -5,27 +5,18 @@ import SomeContext from "../../context/some-context";
 import { DataGrid, GridToolbar, renderActionsCell } from "@mui/x-data-grid";
 import { Button, Modal } from "react-bootstrap";
 import { LinearProgress } from "@mui/material";
+import CreateOrderForm from "../../forms/CreateOrderForm";
+import { Check2Circle } from "react-bootstrap-icons";
 
-const Dashboard = () => {
+const AdminDashboard = () => {
   const someCtx = useContext(SomeContext);
+
   const [getOrderStatus, setGetOrderStatus] = useState({
     status: 200,
     message: "",
   });
   const [loadingOrderTable, setLoadingOrderTable] = useState(true);
 
-  const renderDetailsButton = (params) => {
-    return (
-      <Button
-        variant="contained"
-        color="primary"
-        size="small"
-        onClick={() => {}}
-      >
-        Details
-      </Button>
-    );
-  };
   const orderTableHeader = [
     { field: "completed", headerName: "Completed", minWidth: 90 },
     { field: "due_date", headerName: "Due Date", width: 110 },
@@ -110,7 +101,7 @@ const Dashboard = () => {
         console.log(response.orders);
 
         response.orders.map((order) => {
-          setOrderTableRows([
+          setOrderTableRows((orderTableRows) => [
             ...orderTableRows,
             {
               completed: order.completed,
@@ -148,50 +139,92 @@ const Dashboard = () => {
     }
   };
 
-  const displayOrders = (orders) => {
-    orders.map((order) => {
-      setOrderTableRows([
-        ...orderTableRows,
-        {
-          completed: order.completed,
-          order_id: order.order_id,
-          consignee_address: order.consignee_address,
-          consignee_city: order.consignee_city,
-          consignee_country: order.consignee_country,
-          consignee_email: order.consignee_email,
-          consignee_name: order.consignee_name,
-          consignee_number: order.consignee_number,
-          consignee_postal: order.consignee_postal,
-          consignee_province: order.consignee_province,
-          consignee_state: order.consignee_state,
-          due_date: order.due_date,
-          order_height: order.order_height,
-          order_length: order.order_length,
-          order_weight: order.order_weight,
-          order_width: order.order_width,
-          pickup_address: order.pickup_address,
-          pickup_city: order.pickup_city,
-          pickup_contact_name: order.pickup_contact_name,
-          pickup_contact_number: order.pickup_contact_number,
-          pickup_country: order.pickup_country,
-          pickup_postal: order.pickup_postal,
-          pickup_province: order.pickup_province,
-          pickup_state: order.pickup_state,
-        },
-      ]);
-    });
-  };
   //==========================================================//
   //==================== Create New Order ====================//
   //==========================================================//
-  const [showCreateNewOrder, setShowCreateNewOrder] = useState(false);
-  const handleCreateNewOrderClick = () => {
-    setShowCreateNewOrder(true);
+  const [showCreateOrder, setShowCreateOrder] = useState(false);
+  const [showSuccessCreateOrder, setShowSuccessCreateOrder] = useState(false);
+  let newOrder = {};
+  const [createOrderErrorMessage, setCreateOrderErrorMessage] = useState("");
+
+  const handleCreateOrderClick = () => {
+    setShowCreateOrder(true);
   };
-  const handleCloseNewOrderModal = () => {
-    setShowCreateNewOrder(false);
+  const handleCloseCreateOrderModal = () => {
+    setShowCreateOrder(false);
   };
-  const createNewOrder = () => {};
+
+  const handleSetNewOrder = (newOrderInfo) => {
+    console.log(newOrderInfo);
+    newOrder = newOrderInfo;
+    createOrderToDB();
+  };
+
+  const createOrderToDB = async () => {
+    const url = "http://127.0.0.1:8080/new-order";
+    const body = {
+      email: newOrder.partnerEmail,
+      order_length: newOrder.orderLength,
+      order_width: newOrder.orderWidth,
+      order_height: newOrder.orderHeight,
+      order_weight: newOrder.orderWeight,
+      consignee_name: newOrder.consigneeName,
+      consignee_number: newOrder.consigneeNumber,
+      consignee_country: newOrder.consigneeCountry,
+      consignee_address: newOrder.consigneeAddress,
+      consignee_postal: newOrder.consigneePostal,
+      consignee_state: newOrder.consigneeState,
+      consignee_city: newOrder.consigneeCity,
+      consignee_province: newOrder.consigneeProvince,
+      consignee_email: newOrder.consigneeEmail,
+      pickup_contact_name: newOrder.pickupContactName,
+      pickup_contact_number: newOrder.pickupContactNumber,
+      pickup_country: newOrder.pickupCountry,
+      pickup_address: newOrder.pickupAddress,
+      pickup_postal: newOrder.pickupPostal,
+      pickup_state: newOrder.pickupState,
+      pickup_city: newOrder.pickupCity,
+      pickup_province: newOrder.pickupProvince,
+      due_date: newOrder.dueDate,
+      completed: 0,
+    };
+
+    try {
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+
+      const response = await res.json();
+      console.log(response);
+
+      // Response HTTP Error 400
+      if (response.status === 400) {
+        switch (response.message) {
+          case "Failed to read request body":
+          case "Failed to check if account exists in database":
+          case "Failed to create order":
+          case "No Account Found":
+            setCreateOrderErrorMessage("Please try again");
+            break;
+        }
+      }
+      // Response HTTP OK 200
+      else if (response.status === 200) {
+        setOrderTableRows([]);
+        getOrders();
+        setShowCreateOrder(false);
+        setShowSuccessCreateOrder(true);
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  const handleCloseSuccessCreateOrderModal = () => {
+    setShowSuccessCreateOrder(false);
+  };
 
   return (
     <div className="container-fluid" style={{ height: "100vh" }}>
@@ -226,7 +259,7 @@ const Dashboard = () => {
                   </div>
                   <div className="col d-flex justify-content-end">
                     <Button
-                      onClick={handleCreateNewOrderClick}
+                      onClick={handleCreateOrderClick}
                       style={{ backgroundColor: "#364f6b" }}
                     >
                       Create Order
@@ -235,121 +268,47 @@ const Dashboard = () => {
                 </div>
                 <div className="row">
                   <div className="col">
-                    {/* Create New Order Modal */}
+                    {/* Create Order Modal */}
                     <Modal
-                      show={showCreateNewOrder}
-                      onHide={handleCloseNewOrderModal}
+                      show={showCreateOrder}
+                      onHide={handleCloseCreateOrderModal}
+                      centered
                     >
                       <Modal.Header closeButton>
                         <Modal.Title>Create Order</Modal.Title>
                       </Modal.Header>
                       <Modal.Body>
-                        <Form></Form>
-                        {/* <Form onSubmit={handleSignUpSubmit}>
-                <div className="row">
-                  <div className="col">
-                    <Form.Group className="mb-3" controlId="signup-first-name">
-                      <Form.Control
-                        type="text"
-                        placeholder="First Name *"
-                        onChange={handleSignUpChange}
-                      />
-                      <Form.Text muted>
-                        {signUpErrorMessages.signUpFirstNameError}
-                      </Form.Text>
-                    </Form.Group>
-                  </div>
-                  <div className="col">
-                    <Form.Group controlId="signup-last-name">
-                      <Form.Control
-                        type="text"
-                        placeholder="Last Name *"
-                        onChange={handleSignUpChange}
-                      />
-                      <Form.Text muted>
-                        {signUpErrorMessages.signUpLastNameError}
-                      </Form.Text>
-                    </Form.Group>
-                  </div>
-                </div>
-
-                <div className="row">
-                  <div className="col">
-                    <Form.Group className="mb-3" controlId="signup-email">
-                      <Form.Control
-                        type="email"
-                        placeholder="Email Address *"
-                        onChange={handleSignUpChange}
-                      />
-                      <Form.Text muted>
-                        {signUpErrorMessages.signUpEmailError}
-                      </Form.Text>
-                    </Form.Group>
-                  </div>
-                </div>
-
-                <div className="row">
-                  <div className="col">
-                    <Form.Group className="mb-3" controlId="signup-password">
-                      <Form.Control
-                        type="password"
-                        placeholder="Password *"
-                        onChange={handleSignUpChange}
-                      />
-                      <Form.Text muted>
-                        {signUpErrorMessages.signUpPasswordError}
-                      </Form.Text>
-                    </Form.Group>
-                  </div>
-                </div>
-
-                <div className="row mb-3">
-                  <div className="col-3 d-flex justify-content-start">
-                    <Form.Label>Select Region</Form.Label>
-                  </div>
-                  <div className="col d-flex justify-content-start">
-                    <Form.Group>
-                      <Form.Check
-                        inline
-                        label="Malaysia"
-                        type="radio"
-                        id="signup-partner-malaysia"
-                        name="partner"
-                        value="partner_malaysia"
-                        onClick={() => setSignUpRegion("partner_malaysia")}
-                      />
-                      <Form.Check
-                        inline
-                        label="Indonesia"
-                        type="radio"
-                        id="signup-partner-indonesia"
-                        name="partner"
-                        value="partner_indonesia"
-                        onClick={() => setSignUpRegion("partner_indonesia")}
-                      />
-                      <Form.Text muted>
-                        {signUpErrorMessages.signUpRegionError}
-                      </Form.Text>
-                    </Form.Group>
-                  </div>
-                </div>
-
-                <div className="row mx-0 mb-3">
-                  <Button type="submit">SIGN UP</Button>
-                  <Form.Text muted>{signUpFailedMessage}</Form.Text>
-                </div> */}
+                        <CreateOrderForm
+                          handleSetNewOrder={handleSetNewOrder}
+                        />
                       </Modal.Body>
-                      <Modal.Footer>
-                        <Button
-                          variant="danger"
-                          onClick={handleCloseNewOrderModal}
-                        >
-                          Close
-                        </Button>
-                        <Button style={{ backgroundColor: "#364f6b" }}>
-                          Submit
-                        </Button>
-                      </Modal.Footer>
+                      <p>{createOrderErrorMessage}</p>
+                    </Modal>
+
+                    {/* Successful Created Order Modal */}
+                    <Modal
+                      show={showSuccessCreateOrder}
+                      onHide={handleCloseSuccessCreateOrderModal}
+                      centered
+                    >
+                      <Modal.Header closeButton />
+                      <Modal.Body>
+                        <div className="row">
+                          <div className="col d-flex justify-content-center">
+                            <Check2Circle size={"10rem"} color="green" />
+                          </div>
+                        </div>
+                        <div className="row">
+                          <div className="col d-flex justify-content-center">
+                            <h4>Success!</h4>
+                          </div>
+                        </div>
+                        <div className="row">
+                          <div className="col d-flex justify-content-center">
+                            <span>New order has been created successfully</span>
+                          </div>
+                        </div>
+                      </Modal.Body>
                     </Modal>
 
                     {/* Order Table */}
@@ -358,10 +317,10 @@ const Dashboard = () => {
                       columns={orderTableHeader}
                       initialState={{
                         pagination: {
-                          paginationModel: { page: 1, pageSize: 5 },
+                          paginationModel: { pageSize: 5 },
                         },
                       }}
-                      pageSizeOptions={[5, 10]}
+                      pageSizeOptions={[5, 10, 20]}
                       checkboxSelection
                       slots={{
                         toolbar: GridToolbar,
@@ -392,4 +351,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default AdminDashboard;
