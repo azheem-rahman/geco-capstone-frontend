@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
-import NavBar from "../NavBar/NavBar";
+import AdminNavBar from "../NavBar/AdminNavBar";
 import SomeContext from "../../context/some-context";
 
 import { DataGrid, GridToolbar, renderActionsCell } from "@mui/x-data-grid";
@@ -61,7 +61,6 @@ const AdminDashboard = () => {
   useEffect(() => {
     // GET orders from DB upon first render
     getOrders();
-    // GET list of NPs from DB upon first render
   }, []);
 
   const convertDate = (dateFromDB) => {
@@ -228,123 +227,142 @@ const AdminDashboard = () => {
 
   return (
     <div className="container-fluid" style={{ height: "100vh" }}>
-      <NavBar />
+      <AdminNavBar />
       <div className="container-fluid my-3">
         <div className="row">
           <div className="col">
             <h5>Good Day, ProfileName!</h5>
             <h6>Here's what's happening today.</h6>
-            {/* List of Quick Actions */}
-            {/* <div className="col-3 mt-3">
-            <div
-            className="container bg-light"
-            style={{ border: "solid 1px black" }}
-            >
-            <h5>Quick Actions</h5>
-            </div>
-          </div> */}
           </div>
 
           {/* Display orders J has receive and stored in database > assign order button here + new order button at top right */}
-          {/* <div className="col mt-3"> */}
-          <div className="row">
-            <div className="col">
-              <div
-                className="container-fluid bg-light"
-                style={{ border: "solid 1px black" }}
-              >
-                <div className="row my-3">
-                  <div className="col">
-                    <h5>Orders</h5>
+          <div className="col mt-3">
+            <div className="row">
+              <div className="col">
+                <div
+                  className="container-fluid bg-light"
+                  style={{ border: "solid 1px black" }}
+                >
+                  <div className="row my-3">
+                    <div className="col">
+                      <h5>Orders</h5>
+                    </div>
+                    <div className="col-auto d-flex justify-content-end">
+                      <Button onClick="" style={{ backgroundColor: "#5b81ac" }}>
+                        Assign Order
+                      </Button>
+                    </div>
+                    <div className="col-auto d-flex justify-content-end">
+                      <Button
+                        onClick={handleCreateOrderClick}
+                        style={{ backgroundColor: "#364f6b" }}
+                      >
+                        Create Order
+                      </Button>
+                    </div>
                   </div>
-                  <div className="col d-flex justify-content-end">
-                    <Button
-                      onClick={handleCreateOrderClick}
-                      style={{ backgroundColor: "#364f6b" }}
-                    >
-                      Create Order
-                    </Button>
-                  </div>
-                </div>
-                <div className="row">
-                  <div className="col">
-                    {/* Create Order Modal */}
-                    <Modal
-                      show={showCreateOrder}
-                      onHide={handleCloseCreateOrderModal}
-                      centered
-                    >
-                      <Modal.Header closeButton>
-                        <Modal.Title>Create Order</Modal.Title>
-                      </Modal.Header>
-                      <Modal.Body>
-                        <CreateOrderForm
-                          handleSetNewOrder={handleSetNewOrder}
-                        />
-                      </Modal.Body>
-                      <p>{createOrderErrorMessage}</p>
-                    </Modal>
 
-                    {/* Successful Created Order Modal */}
-                    <Modal
-                      show={showSuccessCreateOrder}
-                      onHide={handleCloseSuccessCreateOrderModal}
-                      centered
-                    >
-                      <Modal.Header closeButton />
-                      <Modal.Body>
-                        <div className="row">
-                          <div className="col d-flex justify-content-center">
-                            <Check2Circle size={"10rem"} color="green" />
-                          </div>
-                        </div>
-                        <div className="row">
-                          <div className="col d-flex justify-content-center">
-                            <h4>Success!</h4>
-                          </div>
-                        </div>
-                        <div className="row">
-                          <div className="col d-flex justify-content-center">
-                            <span>New order has been created successfully</span>
-                          </div>
-                        </div>
-                      </Modal.Body>
-                    </Modal>
+                  <div className="row">
+                    <div className="col">
+                      {/* Create Order Modal */}
+                      <Modal
+                        show={showCreateOrder}
+                        onHide={handleCloseCreateOrderModal}
+                        centered
+                      >
+                        <Modal.Header closeButton>
+                          <Modal.Title>Create Order</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                          <CreateOrderForm
+                            handleSetNewOrder={handleSetNewOrder}
+                          />
+                        </Modal.Body>
+                        <p>{createOrderErrorMessage}</p>
+                      </Modal>
 
-                    {/* Order Table */}
-                    <DataGrid
-                      rows={orderTableRows}
-                      columns={orderTableHeader}
-                      initialState={{
-                        pagination: {
-                          paginationModel: { pageSize: 5 },
-                        },
-                      }}
-                      pageSizeOptions={[5, 10, 20]}
-                      checkboxSelection
-                      slots={{
-                        toolbar: GridToolbar,
-                        loadingOverlay: LinearProgress,
-                      }}
-                      loading={loadingOrderTable}
-                    />
+                      {/* Successful Created Order Modal */}
+                      <Modal
+                        show={showSuccessCreateOrder}
+                        onHide={handleCloseSuccessCreateOrderModal}
+                        centered
+                      >
+                        <Modal.Header closeButton />
+                        <Modal.Body>
+                          <div className="row">
+                            <div className="col d-flex justify-content-center">
+                              <Check2Circle size={"10rem"} color="green" />
+                            </div>
+                          </div>
+                          <div className="row">
+                            <div className="col d-flex justify-content-center">
+                              <h4>Success!</h4>
+                            </div>
+                          </div>
+                          <div className="row">
+                            <div className="col d-flex justify-content-center">
+                              <span>
+                                New order has been created successfully
+                              </span>
+                            </div>
+                          </div>
+                        </Modal.Body>
+                      </Modal>
+
+                      {/* Order Table */}
+                      <DataGrid
+                        rows={orderTableRows}
+                        columns={orderTableHeader}
+                        initialState={{
+                          pagination: {
+                            paginationModel: { pageSize: 10 },
+                          },
+                        }}
+                        pageSizeOptions={[5, 10, 20]}
+                        checkboxSelection
+                        slots={{
+                          toolbar: GridToolbar,
+                          loadingOverlay: LinearProgress,
+                        }}
+                        loading={loadingOrderTable}
+                        sx={{
+                          ".MuiTablePagination-displayedRows": {
+                            "margin-top": "1em",
+                            "margin-bottom": "1em",
+                          },
+                          ".MuiTablePagination-displayedRows, .MuiTablePagination-selectLabel":
+                            {
+                              "margin-top": "1em",
+                              "margin-bottom": "1em",
+                            },
+                        }}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* </div> */}
-
           {/* Display NPs that J has assigned to each of these orders */}
-          {/* <div className="col-2 mt-3">
+          <div className="col-2 mt-3">
             <div
               className="container bg-light"
               style={{ border: "solid 1px black" }}
             >
               <h5>Network Partners</h5>
             </div>
-          </div> */}
+          </div>
+
+          {/* List of Quick Actions */}
+          <div className="col-3 mt-3">
+            <div
+              className="container bg-light"
+              style={{ border: "solid 1px black" }}
+            >
+              <h5>Quick Actions</h5>
+            </div>
+          </div>
         </div>
       </div>
     </div>
