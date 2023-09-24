@@ -6,6 +6,9 @@ import CapstoneLogo from "../../assets/capstone-logo.png";
 import { Bell, PersonCircle } from "react-bootstrap-icons";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import SomeContext from "../../context/some-context";
+import { Nav } from "react-bootstrap";
+import { Link } from "react-router-dom";
+import Profiles from "../Dashboard/Profiles";
 
 const NavBar = () => {
   const someCtx = useContext(SomeContext);
@@ -32,7 +35,7 @@ const NavBar = () => {
         {/* elements aligned to left of navbar */}
         <div className="me-auto">
           {/* Logo */}
-          <Navbar.Brand>
+          <Navbar.Brand as={Link} to="/admin-home">
             <img
               src={CapstoneLogo}
               alt="capstone-logo"
@@ -46,11 +49,14 @@ const NavBar = () => {
           <div className="row d-flex align-items-center">
             <div className="col">{displayAccountType(someCtx.accountType)}</div>
             <div className="col">
-              {/* Notification Icon -- onClick opens small modal */}
-              <Bell
-                className="m-1"
-                style={{ fontSize: "1.5rem", color: "#364f6b" }}
-              />
+              <Nav.Link as={Link} to="/admin-home">
+                Orders
+              </Nav.Link>
+            </div>
+            <div className="col">
+              <Nav.Link as={Link} to="/profiles">
+                Profiles
+              </Nav.Link>
             </div>
 
             <div className="col">
