@@ -137,6 +137,8 @@ const NPDashboard = () => {
 
   const refreshCurrentOrders = () => {
     console.log("refresh current orders clicked!");
+    setOrderTableRows([]);
+    getOrders();
   };
 
   return (
@@ -165,7 +167,7 @@ const NPDashboard = () => {
                         </div>
                         <div className="col-auto d-flex justify-content-end">
                           <Button
-                            onClick=""
+                            onClick={refreshCurrentOrders}
                             style={{ backgroundColor: "#364f6b" }}
                           >
                             Refresh

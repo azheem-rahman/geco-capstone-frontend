@@ -225,6 +225,12 @@ const AdminDashboard = () => {
     setShowSuccessCreateOrder(false);
   };
 
+  const refreshOrders = () => {
+    console.log("refresh current orders clicked!");
+    setOrderTableRows([]);
+    getOrders();
+  };
+
   return (
     <div className="container-fluid" style={{ height: "100vh" }}>
       <AdminNavBar />
@@ -248,14 +254,22 @@ const AdminDashboard = () => {
                       <h5>Orders</h5>
                     </div>
                     <div className="col-auto d-flex justify-content-end">
-                      <Button onClick="" style={{ backgroundColor: "#5b81ac" }}>
-                        Assign Order
+                      <Button
+                        onClick={refreshOrders}
+                        style={{ backgroundColor: "#5b81ac" }}
+                      >
+                        Refresh
                       </Button>
                     </div>
+                    {/* <div className="col-auto d-flex justify-content-end">
+                      <Button onClick="" style={{ backgroundColor: "#364f6b" }}>
+                        Assign Order
+                      </Button>
+                    </div> */}
                     <div className="col-auto d-flex justify-content-end">
                       <Button
                         onClick={handleCreateOrderClick}
-                        style={{ backgroundColor: "#364f6b" }}
+                        style={{ backgroundColor: "#253649" }}
                       >
                         Create Order
                       </Button>
