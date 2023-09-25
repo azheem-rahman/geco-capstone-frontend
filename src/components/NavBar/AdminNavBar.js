@@ -1,16 +1,15 @@
 import React, { useContext } from "react";
+import SomeContext from "../../context/some-context";
 
 import Container from "react-bootstrap/Container";
 import Navbar from "react-bootstrap/Navbar";
 import CapstoneLogo from "../../assets/capstone-logo.png";
 import { Bell, PersonCircle } from "react-bootstrap-icons";
 import NavDropdown from "react-bootstrap/NavDropdown";
-import SomeContext from "../../context/some-context";
 import { Nav } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import Profiles from "../Dashboard/Profiles";
 
-const NavBar = () => {
+const AdminNavBar = () => {
   const someCtx = useContext(SomeContext);
 
   const displayAccountType = (accountType) => {
@@ -47,19 +46,21 @@ const NavBar = () => {
         {/* elements aligned to right of navbar */}
         <div className="ms-auto">
           <div className="row d-flex align-items-center">
-            <div className="col">{displayAccountType(someCtx.accountType)}</div>
             <div className="col">
+              <strong>{displayAccountType(someCtx.accountType)}</strong>
+            </div>
+            <div className="col-auto">
               <Nav.Link as={Link} to="/admin-home">
                 Orders
               </Nav.Link>
             </div>
-            <div className="col">
+            <div className="col-auto">
               <Nav.Link as={Link} to="/profiles">
                 Profiles
               </Nav.Link>
             </div>
 
-            <div className="col">
+            <div className="col-1">
               {/* User Profile -- onClick opens small modal -- Profile, Log Out */}
               <PersonCircle
                 className="m-1"
@@ -84,4 +85,4 @@ const NavBar = () => {
   );
 };
 
-export default NavBar;
+export default AdminNavBar;
