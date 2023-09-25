@@ -125,7 +125,7 @@ const Profiles = () => {
       <div className="container-fluid my-3">
         <div className="row">
           <div className="col">
-            <h5>Good Day, ProfileName!</h5>
+            <h5>Good Day, {someCtx.firstName}!</h5>
             <h6>Here's all profiles</h6>
           </div>
         </div>
