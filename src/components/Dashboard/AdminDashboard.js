@@ -231,7 +231,7 @@ const AdminDashboard = () => {
       <div className="container-fluid my-3">
         <div className="row">
           <div className="col">
-            <h5>Good Day, ProfileName!</h5>
+            <h5>Good Day, {someCtx.firstName}!</h5>
             <h6>Here's what's happening today.</h6>
           </div>
 
@@ -327,13 +327,13 @@ const AdminDashboard = () => {
                         loading={loadingOrderTable}
                         sx={{
                           ".MuiTablePagination-displayedRows": {
-                            "margin-top": "1em",
-                            "margin-bottom": "1em",
+                            marginTop: "1em",
+                            marginBottom: "1em",
                           },
                           ".MuiTablePagination-displayedRows, .MuiTablePagination-selectLabel":
                             {
-                              "margin-top": "1em",
-                              "margin-bottom": "1em",
+                              marginTop: "1em",
+                              marginBottom: "1em",
                             },
                         }}
                       />
@@ -341,26 +341,6 @@ const AdminDashboard = () => {
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-
-          {/* Display NPs that J has assigned to each of these orders */}
-          <div className="col-2 mt-3">
-            <div
-              className="container bg-light"
-              style={{ border: "solid 1px black" }}
-            >
-              <h5>Network Partners</h5>
-            </div>
-          </div>
-
-          {/* List of Quick Actions */}
-          <div className="col-3 mt-3">
-            <div
-              className="container bg-light"
-              style={{ border: "solid 1px black" }}
-            >
-              <h5>Quick Actions</h5>
             </div>
           </div>
         </div>
