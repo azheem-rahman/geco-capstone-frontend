@@ -6,10 +6,10 @@ const CreateOrderForm = (props) => {
 
   const handleCreateOrderChange = (event) => {
     switch (event.target.id) {
-      case "partner-email":
+      case "partner":
         setNewOrderInput({
           ...newOrderInput,
-          partnerEmail: event.target.value,
+          accountId: parseInt(event.target.value),
         });
         break;
       case "due-date":
@@ -75,25 +75,25 @@ const CreateOrderForm = (props) => {
       case "order-height":
         setNewOrderInput({
           ...newOrderInput,
-          orderHeight: event.target.value,
+          orderHeight: parseInt(event.target.value),
         });
         break;
       case "order-length":
         setNewOrderInput({
           ...newOrderInput,
-          orderLength: event.target.value,
+          orderLength: parseInt(event.target.value),
         });
         break;
       case "order-weight":
         setNewOrderInput({
           ...newOrderInput,
-          orderWeight: event.target.value,
+          orderWeight: parseInt(event.target.value),
         });
         break;
       case "order-width":
         setNewOrderInput({
           ...newOrderInput,
-          orderWidth: event.target.value,
+          orderWidth: parseInt(event.target.value),
         });
         break;
       case "pickup-address":
@@ -157,12 +157,17 @@ const CreateOrderForm = (props) => {
       <h5>Partner Details</h5>
       <div className="row">
         <div className="col">
-          <Form.Group className="mb-3" controlId="partner-email">
-            <Form.Control
+          <Form.Group className="mb-3" controlId="partner">
+            {/* <Form.Control
               type="text"
               placeholder="Partner Email *"
               onChange={handleCreateOrderChange}
-            />
+            /> */}
+            <Form.Select onChange={handleCreateOrderChange}>
+              <option>Select Network Partner</option>
+              <option value="32">Malaysia</option>
+              <option value="33">Indonesia</option>
+            </Form.Select>
           </Form.Group>
         </div>
       </div>
