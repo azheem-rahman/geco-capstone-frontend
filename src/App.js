@@ -59,12 +59,12 @@ function App() {
                     <Navigate to="/np-home" />
                   )
                 ) : (
-                  <Navigate to="/login-signup" />
+                  <Navigate to="/login" />
                 )
               }
             />
             {/* Common Routes */}
-            <Route path="/login-signup" element={<LoginSignUp />} />
+            <Route path="/login" element={<LoginSignUp />} />
             {/* Admin Routes */}
             <Route path="/admin-home" element={<AdminDashboard />} />
             <Route path="/profiles" element={<Profiles />} />
