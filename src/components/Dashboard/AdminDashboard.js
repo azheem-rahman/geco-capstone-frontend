@@ -390,7 +390,7 @@ const AdminDashboard = () => {
                           </div>
                           <div className="row">
                             <div className="col d-flex justify-content-center">
-                              <span>Order has been assigned successfully</span>
+                              <span>Order has been created successfully</span>
                             </div>
                           </div>
                         </Modal.Body>
@@ -416,7 +416,7 @@ const AdminDashboard = () => {
                           </div>
                           <div className="row">
                             <div className="col d-flex justify-content-center">
-                              <span>Order status updated successfully</span>
+                              <span>Order has been assigned successfully</span>
                             </div>
                           </div>
                         </Modal.Body>
