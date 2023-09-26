@@ -84,6 +84,14 @@ const NPDashboard = () => {
     }
   };
 
+  const convertOrderStatus = (orderStatus) => {
+    if (orderStatus === 0) {
+      return "No";
+    } else {
+      return "Yes";
+    }
+  };
+
   const getOrders = async () => {
     const url = "http://127.0.0.1:8080/orders";
     try {
@@ -110,36 +118,75 @@ const NPDashboard = () => {
         console.log(response.orders);
 
         response.orders.map((order) => {
-          setOrderTableRows((orderTableRows) => [
-            ...orderTableRows,
-            {
-              completed: order.completed,
-              id: order.order_id,
-              network_partner: convertAccountId(order.account_id),
-              consignee_address: order.consignee_address,
-              consignee_city: order.consignee_city,
-              consignee_country: order.consignee_country,
-              consignee_email: order.consignee_email,
-              consignee_name: order.consignee_name,
-              consignee_number: order.consignee_number,
-              consignee_postal: order.consignee_postal,
-              consignee_province: order.consignee_province,
-              consignee_state: order.consignee_state,
-              due_date: convertDate(order.due_date),
-              order_height: order.order_height,
-              order_length: order.order_length,
-              order_weight: order.order_weight,
-              order_width: order.order_width,
-              pickup_address: order.pickup_address,
-              pickup_city: order.pickup_city,
-              pickup_contact_name: order.pickup_contact_name,
-              pickup_contact_number: order.pickup_contact_number,
-              pickup_country: order.pickup_country,
-              pickup_postal: order.pickup_postal,
-              pickup_province: order.pickup_province,
-              pickup_state: order.pickup_state,
-            },
-          ]);
+          if (
+            someCtx.accountType === "partner_malaysia" &&
+            order.account_id === 32
+          ) {
+            setOrderTableRows((orderTableRows) => [
+              ...orderTableRows,
+              {
+                completed: convertOrderStatus(order.completed),
+                id: order.order_id,
+                network_partner: convertAccountId(order.account_id),
+                consignee_address: order.consignee_address,
+                consignee_city: order.consignee_city,
+                consignee_country: order.consignee_country,
+                consignee_email: order.consignee_email,
+                consignee_name: order.consignee_name,
+                consignee_number: order.consignee_number,
+                consignee_postal: order.consignee_postal,
+                consignee_province: order.consignee_province,
+                consignee_state: order.consignee_state,
+                due_date: convertDate(order.due_date),
+                order_height: order.order_height,
+                order_length: order.order_length,
+                order_weight: order.order_weight,
+                order_width: order.order_width,
+                pickup_address: order.pickup_address,
+                pickup_city: order.pickup_city,
+                pickup_contact_name: order.pickup_contact_name,
+                pickup_contact_number: order.pickup_contact_number,
+                pickup_country: order.pickup_country,
+                pickup_postal: order.pickup_postal,
+                pickup_province: order.pickup_province,
+                pickup_state: order.pickup_state,
+              },
+            ]);
+          } else if (
+            someCtx.accountType === "partner_indonesia" &&
+            order.account_id === 33
+          ) {
+            setOrderTableRows((orderTableRows) => [
+              ...orderTableRows,
+              {
+                completed: convertOrderStatus(order.completed),
+                id: order.order_id,
+                network_partner: convertAccountId(order.account_id),
+                consignee_address: order.consignee_address,
+                consignee_city: order.consignee_city,
+                consignee_country: order.consignee_country,
+                consignee_email: order.consignee_email,
+                consignee_name: order.consignee_name,
+                consignee_number: order.consignee_number,
+                consignee_postal: order.consignee_postal,
+                consignee_province: order.consignee_province,
+                consignee_state: order.consignee_state,
+                due_date: convertDate(order.due_date),
+                order_height: order.order_height,
+                order_length: order.order_length,
+                order_weight: order.order_weight,
+                order_width: order.order_width,
+                pickup_address: order.pickup_address,
+                pickup_city: order.pickup_city,
+                pickup_contact_name: order.pickup_contact_name,
+                pickup_contact_number: order.pickup_contact_number,
+                pickup_country: order.pickup_country,
+                pickup_postal: order.pickup_postal,
+                pickup_province: order.pickup_province,
+                pickup_state: order.pickup_state,
+              },
+            ]);
+          }
         });
 
         setLoadingOrderTable(false);
