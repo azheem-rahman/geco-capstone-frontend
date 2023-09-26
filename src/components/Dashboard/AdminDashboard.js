@@ -21,6 +21,7 @@ const AdminDashboard = () => {
     { field: "completed", headerName: "Completed", minWidth: 90 },
     { field: "due_date", headerName: "Due Date", width: 110 },
     { field: "id", headerName: "Order ID", width: 70 },
+    { field: "network_partner", headerName: "Partner", width: 120 },
     { field: "consignee_address", headerName: "Consignee Address", width: 500 },
     { field: "consignee_city", headerName: "Consignee City", width: 200 },
     { field: "consignee_country", headerName: "Consignee Country", width: 200 },
@@ -73,6 +74,14 @@ const AdminDashboard = () => {
     return dueDateFormatted;
   };
 
+  const convertAccountId = (accountId) => {
+    if (accountId === 32) {
+      return "Malaysia";
+    } else {
+      return "Indonesia";
+    }
+  };
+
   const getOrders = async () => {
     const url = "http://127.0.0.1:8080/orders";
     try {
@@ -105,6 +114,7 @@ const AdminDashboard = () => {
             {
               completed: order.completed,
               id: order.order_id,
+              network_partner: convertAccountId(order.account_id),
               consignee_address: order.consignee_address,
               consignee_city: order.consignee_city,
               consignee_country: order.consignee_country,
