@@ -68,11 +68,11 @@ const NPNavBar = () => {
             </div>
 
             {/* Orders assigned to NP by admin but not accepted yet */}
-            <div className="col-auto">
+            {/* <div className="col-auto">
               <Nav.Link as={Link} to="/new-orders">
                 New Orders
               </Nav.Link>
-            </div>
+            </div> */}
 
             <div className="col-1">
               {/* User Profile -- onClick opens small modal -- Profile, Log Out */}
