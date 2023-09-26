@@ -162,7 +162,7 @@ const AdminDashboard = () => {
   const createOrderToDB = async () => {
     const url = "http://127.0.0.1:8080/new-order";
     const body = {
-      email: newOrder.partnerEmail,
+      account_id: newOrder.accountId,
       order_length: newOrder.orderLength,
       order_width: newOrder.orderWidth,
       order_height: newOrder.orderHeight,
@@ -231,6 +231,8 @@ const AdminDashboard = () => {
     getOrders();
   };
 
+  const assignOrders = () => {};
+
   return (
     <div className="container-fluid" style={{ height: "100vh" }}>
       <AdminNavBar />
@@ -261,11 +263,14 @@ const AdminDashboard = () => {
                         Refresh
                       </Button>
                     </div>
-                    {/* <div className="col-auto d-flex justify-content-end">
-                      <Button onClick="" style={{ backgroundColor: "#364f6b" }}>
+                    <div className="col-auto d-flex justify-content-end">
+                      <Button
+                        onClick={assignOrders}
+                        style={{ backgroundColor: "#364f6b" }}
+                      >
                         Assign Order
                       </Button>
-                    </div> */}
+                    </div>
                     <div className="col-auto d-flex justify-content-end">
                       <Button
                         onClick={handleCreateOrderClick}
