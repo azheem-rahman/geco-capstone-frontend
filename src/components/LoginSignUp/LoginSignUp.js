@@ -427,53 +427,53 @@ const LoginSignUp = () => {
               />
             </div>
           </div>
-          <Tabs
+          {/* <Tabs
             defaultActiveKey="login"
             id="login-sign-up"
             className="mb-3 bg-light"
             justify
-          >
-            {/* Login Form */}
-            <Tab eventKey="login" title="Login">
-              <Form onSubmit={handleLogin}>
-                <div className="row">
-                  <div className="col">
-                    <Form.Group className="mb-3" controlId="login-email">
-                      <Form.Control
-                        type="email"
-                        placeholder="Email Address *"
-                        autoFocus
-                        onChange={handleLoginEmailChange}
-                      />
-                      <Form.Text muted>
-                        {loginErrorMessages.loginEmailError}
-                      </Form.Text>
-                    </Form.Group>
-                  </div>
-                </div>
-                <div className="row">
-                  <div className="col">
-                    <Form.Group className="mb-3" controlId="login-password">
-                      <Form.Control
-                        type="password"
-                        placeholder="Password *"
-                        onChange={handleLoginPasswordChange}
-                      />
-                      <Form.Text muted>
-                        {loginErrorMessages.loginPasswordError}
-                      </Form.Text>
-                    </Form.Group>
-                  </div>
-                </div>
-                <div className="row mx-0">
-                  <Button type="submit">SIGN IN</Button>
-                  <Form.Text muted>{loginFailedMessage}</Form.Text>
-                </div>
-              </Form>
-            </Tab>
+          > */}
+          {/* Login Form */}
+          {/* <Tab eventKey="login" title="Login"> */}
+          <Form onSubmit={handleLogin}>
+            <div className="row">
+              <div className="col">
+                <Form.Group className="mb-3" controlId="login-email">
+                  <Form.Control
+                    type="email"
+                    placeholder="Email Address *"
+                    autoFocus
+                    onChange={handleLoginEmailChange}
+                  />
+                  <Form.Text muted>
+                    {loginErrorMessages.loginEmailError}
+                  </Form.Text>
+                </Form.Group>
+              </div>
+            </div>
+            <div className="row">
+              <div className="col">
+                <Form.Group className="mb-3" controlId="login-password">
+                  <Form.Control
+                    type="password"
+                    placeholder="Password *"
+                    onChange={handleLoginPasswordChange}
+                  />
+                  <Form.Text muted>
+                    {loginErrorMessages.loginPasswordError}
+                  </Form.Text>
+                </Form.Group>
+              </div>
+            </div>
+            <div className="row mx-0">
+              <Button type="submit">SIGN IN</Button>
+              <Form.Text muted>{loginFailedMessage}</Form.Text>
+            </div>
+          </Form>
+          {/* </Tab> */}
 
-            {/* Sign Up Form */}
-            <Tab eventKey="sign-up" title="Sign Up">
+          {/* Sign Up Form */}
+          {/* <Tab eventKey="sign-up" title="Sign Up">
               <Form onSubmit={handleSignUpSubmit}>
                 <div className="row">
                   <div className="col">
@@ -569,7 +569,7 @@ const LoginSignUp = () => {
                 </div>
               </Form>
             </Tab>
-          </Tabs>
+          </Tabs> */}
         </div>
       </div>
 

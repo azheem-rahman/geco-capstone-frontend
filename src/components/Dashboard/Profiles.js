@@ -142,19 +142,19 @@ const Profiles = () => {
                   <div className="col">
                     <h5>Profiles</h5>
                   </div>
-                  <div className="col-auto d-flex justify-content-end">
+                  {/* <div className="col-auto d-flex justify-content-end">
                     <Button
                       onClick={handleCreateProfile}
                       style={{ backgroundColor: "#5b81ac" }}
                     >
                       Create Profile
                     </Button>
-                  </div>
-                  <div className="col-auto d-flex justify-content-end">
+                  </div> */}
+                  {/* <div className="col-auto d-flex justify-content-end">
                     <Button onClick="" style={{ backgroundColor: "#364f6b" }}>
                       Delete Profile
                     </Button>
-                  </div>
+                  </div> */}
                 </div>
 
                 <div className="row">
