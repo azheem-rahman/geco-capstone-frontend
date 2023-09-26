@@ -138,6 +138,17 @@ const AdminDashboard = () => {
     }
   };
 
+  const [selectedRows, setSelectedRows] = useState([]);
+
+  const handleSelectRows = (ids) => {
+    console.log(ids);
+    const selectedRowData = ids.map((id) => {
+      return orderTableRows.find((row) => row.id === id);
+    });
+    console.log(selectedRowData);
+    setSelectedRows(selectedRowData);
+  };
+
   //==========================================================//
   //==================== Create New Order ====================//
   //==========================================================//
@@ -344,6 +355,9 @@ const AdminDashboard = () => {
                           loadingOverlay: LinearProgress,
                         }}
                         loading={loadingOrderTable}
+                        onRowSelectionModelChange={(ids) =>
+                          handleSelectRows(ids)
+                        }
                         sx={{
                           ".MuiTablePagination-displayedRows": {
                             marginTop: "1em",
