@@ -77,10 +77,15 @@ const NPDashboard = () => {
   };
 
   const convertAccountId = (accountId) => {
-    if (accountId === 32) {
-      return "Malaysia";
-    } else {
-      return "Indonesia";
+    if (accountId.Valid) {
+      if (accountId.Int64 === 32) {
+        return "Malaysia";
+      }
+      if (accountId.Int64 === 33) {
+        return "Indonesia";
+      }
+    } else if (accountId.Valid === false) {
+      return "";
     }
   };
 
@@ -116,11 +121,14 @@ const NPDashboard = () => {
       // Response HTTP OK 200
       else if (response.status === 200) {
         console.log(response.orders);
+        if (response.orders === null) {
+          setLoadingOrderTable(true);
+        }
 
         response.orders.map((order) => {
           if (
             someCtx.accountType === "partner_malaysia" &&
-            order.account_id === 32
+            order.account_id.Int64 === 32
           ) {
             setOrderTableRows((orderTableRows) => [
               ...orderTableRows,
@@ -154,7 +162,7 @@ const NPDashboard = () => {
             ]);
           } else if (
             someCtx.accountType === "partner_indonesia" &&
-            order.account_id === 33
+            order.account_id.Int64 === 33
           ) {
             setOrderTableRows((orderTableRows) => [
               ...orderTableRows,

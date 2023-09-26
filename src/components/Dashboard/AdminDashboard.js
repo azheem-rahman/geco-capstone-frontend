@@ -75,10 +75,23 @@ const AdminDashboard = () => {
   };
 
   const convertAccountId = (accountId) => {
-    if (accountId === 32) {
-      return "Malaysia";
+    if (accountId.Valid) {
+      if (accountId.Int64 === 32) {
+        return "Malaysia";
+      }
+      if (accountId.Int64 === 33) {
+        return "Indonesia";
+      }
+    } else if (accountId.Valid === false) {
+      return "";
+    }
+  };
+
+  const convertOrderStatus = (orderStatus) => {
+    if (orderStatus === 0) {
+      return "No";
     } else {
-      return "Indonesia";
+      return "Yes";
     }
   };
 
@@ -106,13 +119,17 @@ const AdminDashboard = () => {
       }
       // Response HTTP OK 200
       else if (response.status === 200) {
+        if (response.orders === null) {
+          setLoadingOrderTable(true);
+        }
+
         console.log(response.orders);
 
         response.orders.map((order) => {
           setOrderTableRows((orderTableRows) => [
             ...orderTableRows,
             {
-              completed: order.completed,
+              completed: convertOrderStatus(order.completed),
               id: order.order_id,
               network_partner: convertAccountId(order.account_id),
               consignee_address: order.consignee_address,
