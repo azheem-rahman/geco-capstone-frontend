@@ -23,6 +23,17 @@ const AdminNavBar = () => {
     }
   };
 
+  const handleLogOut = () => {
+    localStorage.clear();
+
+    someCtx.setEmail("");
+    someCtx.setAccountType("");
+    someCtx.setFirstName("");
+    someCtx.setLastName("");
+    someCtx.setUserLoggedIn(false);
+    someCtx.setAccessToken("");
+  };
+
   return (
     <Navbar
       className="navbar-static-top"
@@ -75,7 +86,9 @@ const AdminNavBar = () => {
               >
                 <NavDropdown.Item>Profile</NavDropdown.Item>
                 <NavDropdown.Divider />
-                <NavDropdown.Item>Log Out</NavDropdown.Item>
+                <NavDropdown.Item as={Link} to="/" onClick={handleLogOut}>
+                  Log Out
+                </NavDropdown.Item>
               </NavDropdown>
             </div>
           </div>

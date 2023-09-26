@@ -125,7 +125,13 @@ const LoginSignUp = () => {
       }
       // Response HTTP OK 200
       else if (response.status === 200) {
+        // add login credentials to localStorage
+        localStorage.setItem("accessToken", response.accessToken);
+        localStorage.setItem("accountType", response.accountType);
+        localStorage.setItem("firstName", response.firstName);
+        localStorage.setItem("lastName", response.lastName);
         // set context with login account credentials
+        someCtx.setAccessToken(response.accessToken);
         someCtx.setEmail(loginEmail);
         someCtx.setFirstName(response.firstName);
         someCtx.setLastName(response.lastName);

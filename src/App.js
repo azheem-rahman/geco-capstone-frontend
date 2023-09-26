@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import AdminDashboard from "./components/Dashboard/AdminDashboard.js";
 import NPDashboard from "./components/Dashboard/NPDashboard.js";
@@ -16,6 +16,18 @@ function App() {
   const [lastName, setLastName] = useState("");
 
   const [userLoggedIn, setUserLoggedIn] = useState(false);
+  const [accessToken, setAccessToken] = useState("");
+
+  // check whether user is logged in
+  useEffect(() => {
+    if (localStorage.accessToken) {
+      setUserLoggedIn(true);
+      setAccountType(localStorage.accountType);
+      setFirstName(localStorage.firstName);
+      setLastName(localStorage.lastName);
+    }
+  }, []);
+
   return (
     <SomeContext.Provider
       value={{
@@ -27,6 +39,10 @@ function App() {
         setFirstName,
         lastName,
         setLastName,
+        userLoggedIn,
+        setUserLoggedIn,
+        accessToken,
+        setAccessToken,
       }}
     >
       <div className="App">
@@ -36,16 +52,15 @@ function App() {
               exact
               path="/"
               element={
-                <Navigate
-                  replace
-                  to={
-                    userLoggedIn
-                      ? accountType === "admin"
-                        ? "/admin-home"
-                        : "/np-home"
-                      : "/login-signup"
-                  }
-                />
+                localStorage.accessToken ? (
+                  localStorage.accountType === "admin" ? (
+                    <Navigate to="/admin-home" />
+                  ) : (
+                    <Navigate to="/np-home" />
+                  )
+                ) : (
+                  <Navigate to="/login-signup" />
+                )
               }
             />
             {/* Common Routes */}
