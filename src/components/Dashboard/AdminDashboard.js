@@ -3,7 +3,7 @@ import AdminNavBar from "../NavBar/AdminNavBar";
 import SomeContext from "../../context/some-context";
 
 import { DataGrid, GridToolbar, renderActionsCell } from "@mui/x-data-grid";
-import { Button, Modal } from "react-bootstrap";
+import { Button, Dropdown, Modal } from "react-bootstrap";
 import { LinearProgress } from "@mui/material";
 import CreateOrderForm from "../../forms/CreateOrderForm";
 import { Check2Circle } from "react-bootstrap-icons";
@@ -151,11 +151,11 @@ const AdminDashboard = () => {
   const [selectedRows, setSelectedRows] = useState([]);
 
   const handleSelectRows = (ids) => {
-    console.log(ids);
+    // console.log(ids);
     const selectedRowData = ids.map((id) => {
       return orderTableRows.find((row) => row.id === id);
     });
-    console.log(selectedRowData);
+    // console.log(selectedRowData);
     setSelectedRows(selectedRowData);
   };
 
@@ -252,7 +252,53 @@ const AdminDashboard = () => {
     getOrders();
   };
 
-  const assignOrders = () => {};
+  const [showSuccessAssignOrder, setShowSuccessAssignOrder] = useState(false);
+
+  const handleCloseSuccessAssignOrderModal = () => {
+    setShowSuccessAssignOrder(false);
+    refreshOrders();
+  };
+
+  const assignOrders = (event) => {
+    console.log(parseInt(event));
+    const partnerSelected = parseInt(event);
+
+    selectedRows.map((order) => {
+      assignOrdersInDB(order, partnerSelected);
+    });
+  };
+
+  const assignOrdersInDB = async (order, partnerSelected) => {
+    const url = "http://127.0.0.1:8080/assign-order";
+    const body = {
+      order_id: order.id,
+      account_id: partnerSelected,
+    };
+    console.log(body);
+
+    try {
+      const res = await fetch(url, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+
+      const response = await res.json();
+      // console.log(response);
+
+      // Response HTTP Error 400
+      if (response.status === 400) {
+        console.log(response.message);
+      }
+      // Response HTTP OK 200
+      else if (response.status === 200) {
+        console.log(response);
+        setShowSuccessAssignOrder(true);
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
 
   return (
     <div className="container-fluid" style={{ height: "100vh" }}>
@@ -285,12 +331,15 @@ const AdminDashboard = () => {
                       </Button>
                     </div>
                     <div className="col-auto d-flex justify-content-end">
-                      <Button
-                        onClick={assignOrders}
-                        style={{ backgroundColor: "#364f6b" }}
-                      >
-                        Assign Order
-                      </Button>
+                      <Dropdown id="assign-order" onSelect={assignOrders}>
+                        <Dropdown.Toggle style={{ backgroundColor: "#364f6b" }}>
+                          Assign Order
+                        </Dropdown.Toggle>
+                        <Dropdown.Menu>
+                          <Dropdown.Item eventKey="32">Malaysia</Dropdown.Item>
+                          <Dropdown.Item eventKey="33">Indonesia</Dropdown.Item>
+                        </Dropdown.Menu>
+                      </Dropdown>
                     </div>
                     <div className="col-auto d-flex justify-content-end">
                       <Button
@@ -341,9 +390,33 @@ const AdminDashboard = () => {
                           </div>
                           <div className="row">
                             <div className="col d-flex justify-content-center">
-                              <span>
-                                New order has been created successfully
-                              </span>
+                              <span>Order has been assigned successfully</span>
+                            </div>
+                          </div>
+                        </Modal.Body>
+                      </Modal>
+
+                      {/* Successfully assign order modal */}
+                      <Modal
+                        show={showSuccessAssignOrder}
+                        onHide={handleCloseSuccessAssignOrderModal}
+                        centered
+                      >
+                        <Modal.Header closeButton />
+                        <Modal.Body>
+                          <div className="row">
+                            <div className="col d-flex justify-content-center">
+                              <Check2Circle size={"10rem"} color="green" />
+                            </div>
+                          </div>
+                          <div className="row">
+                            <div className="col d-flex justify-content-center">
+                              <h4>Success!</h4>
+                            </div>
+                          </div>
+                          <div className="row">
+                            <div className="col d-flex justify-content-center">
+                              <span>Order status updated successfully</span>
                             </div>
                           </div>
                         </Modal.Body>
