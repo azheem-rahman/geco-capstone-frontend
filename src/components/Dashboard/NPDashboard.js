@@ -4,6 +4,7 @@ import SomeContext from "../../context/some-context";
 import { Button, Modal } from "react-bootstrap";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { LinearProgress } from "@mui/material";
+import { Check2Circle } from "react-bootstrap-icons";
 
 const NPDashboard = () => {
   const someCtx = useContext(SomeContext);
@@ -14,6 +15,9 @@ const NPDashboard = () => {
   });
 
   const [loadingOrderTable, setLoadingOrderTable] = useState(true);
+
+  const [ordersToUpdate, setOrdersToUpdate] = useState([]);
+  let orderCompleted = 0;
 
   const orderTableHeader = [
     { field: "completed", headerName: "Completed", minWidth: 90 },
@@ -141,6 +145,64 @@ const NPDashboard = () => {
     getOrders();
   };
 
+  const handleSelectRows = (ids) => {
+    const selectedRowData = ids.map((id) => {
+      return orderTableRows.find((row) => row.id === id);
+    });
+    console.log(selectedRowData);
+    setOrdersToUpdate(selectedRowData);
+  };
+
+  const updateOrderStatus = (event) => {
+    if (event.target.id === "mark-completed") {
+      orderCompleted = 1;
+    } else if (event.target.id === "mark-incomplete") {
+      orderCompleted = 0;
+    }
+
+    ordersToUpdate.map((order) => {
+      updateOrderStatusInDB(order);
+    });
+  };
+
+  const updateOrderStatusInDB = async (order) => {
+    const url = "http://127.0.0.1:8080/update-order-status";
+    const body = {
+      order_id: order.id,
+      completed: orderCompleted,
+    };
+
+    try {
+      const res = await fetch(url, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+
+      const response = await res.json();
+      // console.log(response);
+
+      // Response HTTP Error 400
+      if (response.status === 400) {
+        console.log(response.message);
+      }
+      // Response HTTP OK 200
+      else if (response.status === 200) {
+        console.log(response);
+        setShowSuccessUpdateOrderStatus(true);
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  const [showSuccessUpdateOrderStatus, setShowSuccessUpdateOrderStatus] =
+    useState(false);
+  const handleCloseSuccessUpdateOrderStatusModal = () => {
+    setShowSuccessUpdateOrderStatus(false);
+    refreshCurrentOrders();
+  };
+
   return (
     <div className="container-fluid" style={{ height: "100vh" }}>
       <NPNavBar />
@@ -174,12 +236,20 @@ const NPDashboard = () => {
                           </Button>
                         </div>
                         <div className="col-auto d-flex justify-content-end">
-                          <Button onClick="" variant="danger">
+                          <Button
+                            id="mark-incomplete"
+                            onClick={updateOrderStatus}
+                            variant="danger"
+                          >
                             Mark Incomplete
                           </Button>
                         </div>
                         <div className="col-auto d-flex justify-content-end">
-                          <Button onClick="" variant="success">
+                          <Button
+                            id="mark-completed"
+                            onClick={updateOrderStatus}
+                            variant="success"
+                          >
                             Mark Completed
                           </Button>
                         </div>
@@ -187,6 +257,32 @@ const NPDashboard = () => {
 
                       <div className="row">
                         <div className="col">
+                          {/* Successfully updated order status modal */}
+                          <Modal
+                            show={showSuccessUpdateOrderStatus}
+                            onHide={handleCloseSuccessUpdateOrderStatusModal}
+                            centered
+                          >
+                            <Modal.Header closeButton />
+                            <Modal.Body>
+                              <div className="row">
+                                <div className="col d-flex justify-content-center">
+                                  <Check2Circle size={"10rem"} color="green" />
+                                </div>
+                              </div>
+                              <div className="row">
+                                <div className="col d-flex justify-content-center">
+                                  <h4>Success!</h4>
+                                </div>
+                              </div>
+                              <div className="row">
+                                <div className="col d-flex justify-content-center">
+                                  <span>Order status updated successfully</span>
+                                </div>
+                              </div>
+                            </Modal.Body>
+                          </Modal>
+
                           <DataGrid
                             rows={orderTableRows}
                             columns={orderTableHeader}
@@ -200,6 +296,9 @@ const NPDashboard = () => {
                               loadingOverlay: LinearProgress,
                             }}
                             loading={loadingOrderTable}
+                            onRowSelectionModelChange={(ids) =>
+                              handleSelectRows(ids)
+                            }
                             sx={{
                               ".MuiTablePagination-displayedRows": {
                                 marginTop: "1em",
